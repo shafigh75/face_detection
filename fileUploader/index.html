@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    input[type="file"] {
+      display: none;
+    }
+    .custom-file-upload {
+      display: inline-block;
+      padding: 6px 12px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-align: center;
+      transition: all 0.2s ease-in-out;
+    }
+    .custom-file-upload:hover {
+      background-color: #f2f2f2;
+    }
+    .file-preview {
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  #preview {
+    max-width: 100%;
+    max-height: 300px;
+    margin: auto;
+    display: block;
+  }
+  #snackbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background-color: #333;
+    color: #fff;
+    display: none;
+    text-align: center;
+  }
+  #snackbar.error {
+    background-color: #f44336;
+  }
+  #snackbar.success {
+    background-color: #4CAF50;
+  }
+  </style>
+</head>
+<body>
+  <div style="text-align: center; padding: 50px;">
+    <h3>File Uploader</h3>
+    <input type="text" id="name" placeholder="Enter your name" style="margin-bottom: 20px; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
+    <label for="file" class="custom-file-upload">
+      Choose a file
+    </label>
+    <input type="file" id="file" style="display: none;">
+    <div class="file-preview">
+      <p id="file-name"></p>
+      <img id="preview" style="display: none; max-width: 200px; max-height: 200px;">
+    </div>
+    <button id="submit" style="margin-top: 20px; padding: 10px 20px; border-radius: 4px; background-color: #4CAF50; color: #fff; border: none; cursor: pointer;">
+      Submit
+    </button>
+  </div>
+  <div id="snackbar"></div>
+  <script>
+    const submitBtn = document.getElementById("submit");
+    const fileInput = document.getElementById("file");
+    const nameInput = document.getElementById("name");
+    const preview = document.getElementById("preview");
+    const fileName = document.getElementById("file-name");
+    const snackbar = document.getElementById("snackbar");
+  
+    fileInput.addEventListener("change", function() {
+      fileName.innerHTML = fileInput.files[0].name;
+  
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(fileInput.files[0]);
+    });
+  
+    submitBtn.addEventListener("click", function() {
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+      formData.append("name", nameInput.value);
+  
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "http://localhost:5555/upload");
+      xhr.onload = function() {
+        if (xhr.status >= 400) {
+          snackbar.innerHTML = "An error occurred.";
+          snackbar.classList.add("error");
+        } else {
+          const response = JSON.parse(xhr.responseText);
+          snackbar.innerHTML = response.message;
+          snackbar.classList.remove("error");
+          snackbar.classList.add("success");
+        }
+        snackbar.style.display = "block";
+        setTimeout(function() {
+          snackbar.style.display = "none";
+          snackbar.classList.remove("success");
+        }, 3000);
+      };
+      xhr.send(formData);
+    });
+  </script>
+</body>
+</html>
+
