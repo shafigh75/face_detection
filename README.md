@@ -4,8 +4,8 @@ The described tool is a real-time face detection hobby tool that utilizes thread
 ___
 to start the application all you need to do is to launch it using the setup.sh file
 ```bash
-    chmod +x setup.sh
-    ./setup.sh
+chmod +x setup.sh
+./setup.sh
 ```
 
 ___
@@ -14,7 +14,7 @@ ___
 there are 2 files in the image2Encoding directory. the default file is thread.py that uses the registered faces (via REST API) and saves the model in redis DB.
 there is also another file in that directory which is unknown.py and you can replace the name of the running script in Makefile. 
 if you decide to use the unknown file, it will add any unknown face it finds as a new user with a name defined as: [ Unknown + UUID.V4 ]
-so it depends on what you want to do with the file and based on your use case you can get the idea.
+so it depends on what you want to do with the project and based on your use case you can choose which file to use.
 
 ___
 ## Disclaimer:
