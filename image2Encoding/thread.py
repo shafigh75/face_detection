@@ -15,7 +15,7 @@ def ConvertImage2Encoded(filepath):
 
 
 def RedisConn():
-    r = redis.Redis(host='localhost', port=10002, db=0, password="eYVX7Ew24VmmxKPCDmwMtggyKVge8oLd2t81")
+    r = redis.Redis(host='localhost', port=6379, db=0, password="eYVX7Ew24VmmxKPCDmwMtggyKVge8oLd2t81")
     return r
 
 

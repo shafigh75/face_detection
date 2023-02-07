@@ -15,6 +15,8 @@ there are 2 files in the image2Encoding directory. the default file is thread.py
 there is also another file in that directory which is unknown.py and you can replace the name of the running script in Makefile. 
 if you decide to use the unknown file, it will add any unknown face it finds as a new user with a name defined as: [ Unknown + UUID.V4 ]
 so it depends on what you want to do with the project and based on your use case you can choose which file to use.
+also note that inside code where you define video capture device for now it is by default set on the camera #0 (most likely /dev/video0) but you can change the 
+input camera or use RTSP camera stream (which i have a sample comment inside the code that will help you get started)
 
 ___
 ## Disclaimer:
