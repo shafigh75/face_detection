@@ -51,7 +51,7 @@ def GetFileNames(path):
     files = os.listdir(path)
     return files
 
-BasePath = "/home/mohammad/Aftab/faceRecognition/pics/"
+BasePath = "./pics/"
 
 # start redis
 RedisClient = RedisConn()
