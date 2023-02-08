@@ -17,6 +17,7 @@ if you decide to use the unknown file, it will add any unknown face it finds as 
 so it depends on what you want to do with the project and based on your use case you can choose which file to use.
 also note that inside code where you define video capture device for now it is by default set on the camera #0 (most likely /dev/video0) but you can change the 
 input camera or use RTSP camera stream (which i have a sample comment inside the code that will help you get started)
+Note: after the launch process is completed you can access the panel for file upload on localhost:5555
 
 ___
 ## Disclaimer:
