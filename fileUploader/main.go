@@ -26,7 +26,7 @@ func UploadPicture(w http.ResponseWriter, r *http.Request) {
 
 	// check request method
 	if r.Method != http.MethodPost {
-		http.ServeFile(w, r, "fileUploader/index.html")
+		http.ServeFile(w, r, "./index.html")
 		return
 	}
 
@@ -56,9 +56,13 @@ func UploadPicture(w http.ResponseWriter, r *http.Request) {
 	// set the fileName
 	fileName := r.FormValue("name")
 	if len(ext) > 0 {
-		fileName = fileName + ext[0]
+		if ext[0] == ".jpe" {
+			fileName = fileName + ext[2]
+		} else {
+			fileName = fileName + ext[0]
+		}
 	}
-	folderPath := "/home/mohammad/Aftab/faceRecognition/pics"
+	folderPath := "../pics"
 	filePath := filepath.Join(folderPath, fileName)
 
 	// create file as io.writer
