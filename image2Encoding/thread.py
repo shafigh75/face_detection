@@ -4,6 +4,7 @@ import numpy as np
 import os
 import cv2
 import threading
+
 # import pdb
 # pdb.set_trace()
 
@@ -15,14 +16,20 @@ def ConvertImage2Encoded(filepath):
 
 
 def RedisConn():
-    r = redis.Redis(host='localhost', port=6379, db=0, password="eYVX7Ew24VmmxKPCDmwMtggyKVge8oLd2t81")
+    r = redis.Redis(
+        host="localhost",
+        port=6379,
+        db=0,
+        password="eYVX7Ew24VmmxKPCDmwMtggyKVge8oLd2t81",
+    )
     return r
 
 
-def SaveEncoding(Encoding,Name,redisDB):
+def SaveEncoding(Encoding, Name, redisDB):
     # Serialize each array and store in Redis as a string
     redisDB.delete(Name)
-    redisDB.set(Name,Encoding.dumps()) 
+    redisDB.set(Name, Encoding.dumps())
+
 
 def GetAllEncodings(redisDB):
     list_keys = [key.decode() for key in redisDB.keys()]
@@ -32,32 +39,41 @@ def GetAllEncodings(redisDB):
         Final_encodings.append(list(arr))
     return Final_encodings
 
+
 def GetAllRedisKeys(redisDB):
     list_keys = [key.decode() for key in redisDB.keys()]
     return list_keys
+
 
 def count_files(path):
     return len([f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))])
 
 
 def strip_file_name(file_name):
-    return file_name.split('.')[0]
+    return file_name.split(".")[0]
+
 
 def DataCountInRedis(redisDB):
     obj_count = redisDB.dbsize()
     return obj_count
 
+
 def GetFileNames(path):
     files = os.listdir(path)
     return files
 
-BasePath = "./pics/"
+
+absolute_path = os.path.dirname(__file__)
+relative_path = "../pics/"
+BasePath = os.path.join(absolute_path, relative_path)
 
 # start redis
 RedisClient = RedisConn()
 
 # start the model trainer:
 state = False
+
+
 def TrainModel(BasePath):
     global state
     RedisClient = RedisConn()
@@ -87,11 +103,11 @@ def TrainModel(BasePath):
                 newEncodingList.append(EncodedData)
 
             # zip the encoding with its label
-            zippedData = list(zip(newEncodingList,newKeys))
+            zippedData = list(zip(newEncodingList, newKeys))
 
             # save the new encoding with name in the redis databse
-            for Encoding,Name in zippedData:
-                SaveEncoding(Encoding,Name,RedisClient)
+            for Encoding, Name in zippedData:
+                SaveEncoding(Encoding, Name, RedisClient)
         state = True
 
 
@@ -99,7 +115,7 @@ def TrainModel(BasePath):
 os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;0"
 # Get a reference to webcam #0 (the default one) (WEBCAM)
 video_capture = cv2.VideoCapture(0)
-video_capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))
+video_capture.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc("M", "J", "P", "G"))
 
 # RTSP
 # Url = "rtsp://admin:Cam1live@192.168.1.7:554/onvif1"
@@ -125,7 +141,7 @@ def UpdateModel():
                 known_face_names = []
         except:
             pass
-    
+
 
 # Initialize some variables
 face_locations = []
@@ -134,7 +150,7 @@ face_names = []
 process_this_frame = True
 
 # Run the Model:
-def RunModel(process_this_frame,video_capture):
+def RunModel(process_this_frame, video_capture):
     global known_face_encodings
     global known_face_names
     while True:
@@ -149,16 +165,20 @@ def RunModel(process_this_frame,video_capture):
 
                 # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
                 rgb_small_frame = small_frame[:, :, ::-1]
-                
+
                 # Find all the faces and face encodings in the current frame of video
                 face_locations = face_recognition.face_locations(rgb_small_frame)
-                face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+                face_encodings = face_recognition.face_encodings(
+                    rgb_small_frame, face_locations
+                )
 
                 face_names = []
                 for face_encoding in face_encodings:
                     # See if the face is a match for the known face(s)
                     try:
-                        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+                        matches = face_recognition.compare_faces(
+                            known_face_encodings, face_encoding
+                        )
                         name = "Unknown"
 
                         # # If a match was found in known_face_encodings, just use the first one.
@@ -167,7 +187,9 @@ def RunModel(process_this_frame,video_capture):
                         #     name = known_face_names[first_match_index]
 
                         # Or instead, use the known face with the smallest distance to the new face
-                        face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+                        face_distances = face_recognition.face_distance(
+                            known_face_encodings, face_encoding
+                        )
                         best_match_index = np.argmin(face_distances)
                         if matches[best_match_index]:
                             name = known_face_names[best_match_index]
@@ -177,7 +199,6 @@ def RunModel(process_this_frame,video_capture):
                         continue
 
             process_this_frame = not process_this_frame
-
 
             # Display the results
             for (top, right, bottom, left), name in zip(face_locations, face_names):
@@ -191,20 +212,25 @@ def RunModel(process_this_frame,video_capture):
                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
 
                 # Draw a label with a name below the face
-                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+                cv2.rectangle(
+                    frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED
+                )
                 font = cv2.FONT_HERSHEY_DUPLEX
-                cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+                cv2.putText(
+                    frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1
+                )
 
             # Display the resulting image
-            cv2.imshow('Video', frame)
+            cv2.imshow("Video", frame)
 
             # Hit 'q' on the keyboard to quit!
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
 
-thread1 = threading.Thread(target=TrainModel,args=(BasePath,))
+
+thread1 = threading.Thread(target=TrainModel, args=(BasePath,))
 thread2 = threading.Thread(target=UpdateModel)
-thread3 = threading.Thread(target=RunModel,args=(process_this_frame,video_capture))
+thread3 = threading.Thread(target=RunModel, args=(process_this_frame, video_capture))
 
 thread1.start()
 thread2.start()
@@ -215,5 +241,3 @@ thread3.join()
 # Release handle to the webcam
 video_capture.release()
 cv2.destroyAllWindows()
-
-

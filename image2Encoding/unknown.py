@@ -52,7 +52,9 @@ def GetFileNames(path):
     files = os.listdir(path)
     return files
 
-BasePath = "./pics/"
+absolute_path = os.path.dirname(__file__)
+relative_path = "../pics/"
+BasePath = os.path.join(absolute_path, relative_path)
 
 # start redis
 RedisClient = RedisConn()

@@ -19,6 +19,7 @@ also note that inside code where you define video capture device for now it is b
 input camera or use RTSP camera stream (which i have a sample comment inside the code that will help you get started)<br>
 Note #1: after the launch process is completed you can access the panel for file upload on localhost:5555<br>
 Note #2: remember that redis models is not Durable(as D in ACID) and if you need persistent data you need to persist data on disk<br>
+Note #3: you may want to change redis password or model tolerance rate (currently 0.6)
 
 ___
 ## Disclaimer:
