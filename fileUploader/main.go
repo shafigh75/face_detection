@@ -26,7 +26,7 @@ func UploadPicture(w http.ResponseWriter, r *http.Request) {
 
 	// check request method
 	if r.Method != http.MethodPost {
-		http.ServeFile(w, r, "./index.html")
+		http.ServeFile(w, r, "fileUploader/index.html")
 		return
 	}
 
@@ -62,7 +62,7 @@ func UploadPicture(w http.ResponseWriter, r *http.Request) {
 			fileName = fileName + ext[0]
 		}
 	}
-	folderPath := "../pics"
+	folderPath := "pics"
 	filePath := filepath.Join(folderPath, fileName)
 
 	// create file as io.writer
