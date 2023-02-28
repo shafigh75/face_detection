@@ -8,6 +8,11 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
+Note : if you are on a debian-based linux and run into problems while installing dlib, chances are these packages will solve the issue:
+```bash
+sudo apt-get install python3 python3-pip build-essential cmake pkg-config libx11-dev libatlas-base-dev libgtk-3-dev libboost-python-dev -y
+```
+
 ___
 
 ## Details:
